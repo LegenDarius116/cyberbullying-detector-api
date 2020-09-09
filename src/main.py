@@ -7,6 +7,15 @@ text_classifier = load("model/model_v3.model")
 app = FastAPI()
 
 
+@app.get("/")
+async def root():
+    return {
+        "title": "Cyberbullying Detector API",
+        "description": "This is an API that uses machine learning to detect cyberbullying content in a piece of text. "
+                       "See /docs for more information."
+    }
+
+
 @app.get("/analyze/")
 async def analyze_text(q: Optional[str] = None):
     """Takes the query string, and then uses a text classifier to analyze it for cyberbullying content.
@@ -21,7 +30,7 @@ async def analyze_text(q: Optional[str] = None):
     probability = 0.0
 
     if q is not None:
-        is_cyberbullying = text_classifier.predict([text])[0]
+        is_cyberbullying = text_classifier.predict([text])[0] == "1"
         probability = text_classifier.predict_proba([text])[0][1]
 
     return {
